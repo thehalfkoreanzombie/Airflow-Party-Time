@@ -1,0 +1,5 @@
+pandas
+jupyterlab
+pyyaml
+pyarrow
+fsspec
