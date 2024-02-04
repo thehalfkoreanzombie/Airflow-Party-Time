@@ -79,6 +79,10 @@ After completing this, you will need to fetch the docker yaml file into your dsa
 curl -LfO 'https://airflow.apache.org/docs/apache-airflow/stable/docker-compose.yaml'
 ```
 
+In this yaml file, you'll need to mount your local airflow directory to /opt/airflow. You'll also need to direct your data folder. You can add these in the yaml like this:
+
+![Volumes](/images/yaml_volumes.png)
+
 Once you have your dsa-airflow folder intact, you need to start airflow. in a bash terminal, navigate to this dsa-airflow directory. Use:
 
 ```bash
