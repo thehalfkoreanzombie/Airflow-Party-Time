@@ -10,8 +10,10 @@ from statistics import mode
 #list of flavors people wanted at the party
 FLAVORS_CHOICES = ["lemon", "vanilla", "chocolate", "pistachio", "strawberry", "confetti", "caramel", "pumpkin", "rose"]
 
+#file where the votes can be found
 VOTES_FILE_NAME = 'votes.csv'
 
+#instantiating a dag using a dag decorator
 @dag(
     schedule_interval="@once",
     start_date=datetime.utcnow(),
@@ -21,8 +23,10 @@ VOTES_FILE_NAME = 'votes.csv'
     tags=['party_time']
 )
 
+#function to be used as the dag
 def party_cake_choice():
     
+    #read votes task defined by task decorator
     @task
     def read_votes_with_return_value() -> str:
         """
@@ -36,25 +40,29 @@ def party_cake_choice():
         data_dir = data_fs.get_path()           # get its root path
         print(f"data_fs root path: {data_dir}")
 
-        # create the full path to the airports file
+        # create the full path to the votes file
         file_path = os.path.join(data_dir, VOTES_FILE_NAME)
         print(f"reading file: {file_path}")
 
-        # read csv
         df = pd.read_csv(file_path, header=0)
         all_votes = df['votes'].tolist()
+        #printed all_votes list to ensure it worked
         #print(all_votes)
+        #empty list to append valid votes to
         valid_votes = []
         for item in all_votes:
             if item in FLAVORS_CHOICES:
                 valid_votes.append(item)
         return valid_votes
 
+    #task to determine flavor voted on the most
     @task
     def most_voted_flavor(flavor_list: str):
+        #imported statistics to use mode, way easier
         flavor = mode(flavor_list)
         print(f"The flavor of choice is {flavor}!!!")
 
+    #task to wait for votes.csv to enter our data folder
     wait_for_file = FileSensor(
         task_id='wait_for_file',
         poke_interval=15,                   # check every 15 seconds
